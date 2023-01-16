@@ -1,0 +1,31 @@
+version: '3'
+services:
+
+  hotel-bockings-postgres:
+    image: postgres:13.2
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - ${PWD}/db-init/:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+    networks:
+      - docker_default
+
+  hotel-bockings-backend:
+    image: nikojochim/mwt-backend:1.0
+    container_name: hotel-bookings-backend
+    depends_on:
+      - hotel-bockings-postgres
+    ports:
+      - "9001:9001"
+    restart: unless-stopped
+    networks:
+      - docker_default
+
+networks:
+  docker_default:
+    external: true
